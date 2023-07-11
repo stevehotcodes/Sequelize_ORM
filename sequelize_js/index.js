@@ -1,6 +1,8 @@
 const {Sequelize}=require('sequelize');
-const { IsEmail, AutoIncrement } = require('sequelize-typescript');
+// const { IsEmail, AutoIncrement } = require('sequelize-typescript');
 
+
+//create the constructor for the connection 
 const sequelize =new Sequelize('TheJituDB','sa','1234',{
     host:'localhost',                                            //create the sequelize instance
     dialect:'mssql'
@@ -9,8 +11,10 @@ const sequelize =new Sequelize('TheJituDB','sa','1234',{
 async function connectDatabase(){
     
 try{
-    sequelize.authenticate()
-    console.log('connection has been established successfully')
+    sequelize.authenticate().then(()=>{
+        console.log('connection has been established successfully')
+    })
+    
 }
 catch(error){                                                         //connect to the database
 
@@ -63,8 +67,9 @@ const decodeUsers= sequelize.define(
         },
         userName:{
             type:Sequelize.STRING,
+            unique:false,
             allowNull:false,
-            unique:true
+           
         },
 
         github:{
@@ -86,54 +91,58 @@ const decodeUsers= sequelize.define(
             type:Sequelize.DATE,
             defaultValue:Sequelize.NOW // or default date option two default "defaultValue:()=> new Date()"
         }
+    },
+    {
+        freezeTableName:true,
+        timestamps:false
     }
-
+   
     
 )
 //questions Model
-const questions =sequelize.define(
-    'questions',
-    {
-        id:{
-                type:Sequelize.UUID,
-                allowNull:false,
-                unique:true,
-                primaryKey:true
+// const questions =sequelize.define(
+//     'questions',
+//     {
+//         id:{
+//                 type:Sequelize.UUID,
+//                 allowNull:false,
+//                 unique:true,
+//                 primaryKey:true
 
-            },
-        questionTitle:{
-            type:Sequelize.STRING,
-            allowNull:false,
-            validate:{
-                notEmpty:true,
-                len:[3,50]
+//             },
+//         questionTitle:{
+//             type:Sequelize.STRING,
+//             allowNull:false,
+//             validate:{
+//                 notEmpty:true,
+//                 len:[3,50]
                
-            }
+//             }
 
-        },
-        questionDescription:{
-            type:Sequelize.STRING,
-            allowNull:false,
-            valiidate:{
-                notEmpty:false
-            }
-        },
-        questionTag:{
-            type:Sequelize.STRING,
-            allowNull:false,
-            validate:
-            {
-                notEmpty:true
-            }
-        }
-    }
+//         },
+//         questionDescription:{
+//             type:Sequelize.STRING,
+//             allowNull:false,
+//             valiidate:{
+//                 notEmpty:false
+//             }
+//         },
+//         questionTag:{
+//             type:Sequelize.STRING,
+//             allowNull:false,
+//             validate:
+//             {
+//                 notEmpty:true
+//             }
+//         }
+//     }
     
     
     
-    )
+//     )
 
 //synchronize with the database
-sequelize.sync()
+sequelize.sync({alter:true})
     .then(()=>{
         console.log('database and tables created')
     })
@@ -143,14 +152,14 @@ sequelize.sync()
 
 
 //hook for aftercreate user
-decodeUsers.afterCreate(async (decodeUsers,options)=>{
-    console.log("New User has been created:");
-    console.log(decodeUsers.userName);
-    console.log(decodeUsers.email)
-})
+// decodeUsers.afterCreate(async (decodeUsers,options)=>{
+//     console.log("New User has been created:");
+//     console.log(decodeUsers.userName);
+//     console.log(decodeUsers.email)
+// })
 
 
-//insert data
+// insert data
 
 async function createUser(){
     try {
@@ -171,4 +180,6 @@ async function createUser(){
     }
 }
 createUser()
+
+console.log(sequelize.models.decodeUsers);
   
