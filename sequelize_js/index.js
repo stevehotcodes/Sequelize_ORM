@@ -1,4 +1,5 @@
 const {Sequelize}=require('sequelize');
+// const {DataTypes}=Sequelize
 // const { IsEmail, AutoIncrement } = require('sequelize-typescript');
 
 
@@ -100,52 +101,103 @@ const decodeUsers= sequelize.define(
     
 )
 //questions Model
-// const questions =sequelize.define(
-//     'questions',
-//     {
-//         id:{
-//                 type:Sequelize.UUID,
-//                 allowNull:false,
-//                 unique:true,
-//                 primaryKey:true
+const sequelizeQuestions =sequelize.define(
+    'sequelizeQuestions',
+    {
+        id:{
+                type:Sequelize.INTEGER,
+                allowNull:false,
+                unique:true,
+                primaryKey:true,
+                autoIncrement:true
 
-//             },
-//         questionTitle:{
-//             type:Sequelize.STRING,
-//             allowNull:false,
-//             validate:{
-//                 notEmpty:true,
-//                 len:[3,50]
+            },
+        questionTitle:{
+            type:Sequelize.STRING,
+            allowNull:false,
+            validate:{
+                notEmpty:true,
+                len:[3,50]
                
-//             }
+            }
 
-//         },
-//         questionDescription:{
-//             type:Sequelize.STRING,
-//             allowNull:false,
-//             valiidate:{
-//                 notEmpty:false
-//             }
-//         },
-//         questionTag:{
-//             type:Sequelize.STRING,
-//             allowNull:false,
-//             validate:
-//             {
-//                 notEmpty:true
-//             }
-//         }
-//     }
+        },
+        questionDescription:{
+            type:Sequelize.STRING,
+            allowNull:false,
+            valiidate:{
+                notEmpty:false
+            }
+        },
+        questionTag:{
+            type:Sequelize.STRING,
+            allowNull:false,
+            validate:
+            {
+                notEmpty:true
+            }
+        }
+    }
     
     
     
-//     )
+    )
 
 //synchronize with the database
-sequelize.sync({alter:true})
+sequelize.sync({force:true})
     .then(()=>{
+         return decodeUsers.create(
+            {
+                firstName:"Sally",
+                lastName:"DB",
+                userName:"sallyDB",
+                email:"sally@gmail.com",
+                github:"sally",
+                password:"Password123"
+            
+            }
+         )
         console.log('database and tables created')
+    }).then((data)=>{
+        console.log('database and tables cretaed successfully',data.toJSON())
+        data.lastName='Ondieki'
+        data.github='Nyaru'
+        return data.save({fields:['github']})
+    }
+        
+    ).then((data)=>{
+        console.log(data)
+        console.log('data udated  successfully',data)
+    }
+    )
+    .then(()=>{
+        return sequelizeQuestions.bulkCreate([
+            {
+            questionTitle:'Javascript',
+            questionDescription:'What is JavaScript',
+            questionTag:'#JS'
+            },
+
+            {
+                questionTitle:'Java',
+                questionDescription:'What is a constructor',
+                questionTag:'#Java'
+            },
+            {
+                
+            }
+        ])
     })
+    .then((data)=>{
+
+        console.log('question added to the table successfully')
+        return  data.forEach((element)=>{
+            console.log(element.toJSON())
+         })
+    }
+        
+        
+        )
     .catch((error)=>{
         console.error('error in creating database', error)
     })
@@ -161,25 +213,25 @@ sequelize.sync({alter:true})
 
 // insert data
 
-async function createUser(){
-    try {
-        const user =await decodeUsers.create({
-            firstName:"Vladimir",
-            lastName:"Zelensky",
-            userName:"Vladimir",
-            email:"vladimirzelenesky@gmail.com",
-            github:"vladzelenesky",
-            password:"Password123"
+// async function createUser(){
+//     try {
+//         const user =await decodeUsers.create({
+//             firstName:"Vladimir",
+//             lastName:"Zelensky",
+//             userName:"Vladimir",
+//             email:"vladimirzelenesky@gmail.com",
+//             github:"vladzelenesky",
+//             password:"Password123"
         
-        })
-        console.log(`user ${user.userName} has been created successfully`)
+//         })
+//         console.log(`user ${user.userName} has been created successfully`)
         
-    } catch (error) {
-        console.log("error in creating user", error)
+//     } catch (error) {
+//         console.log("error in creating user", error)
         
-    }
-}
-createUser()
+//     }
+// }
+
 
 console.log(sequelize.models.decodeUsers);
   
