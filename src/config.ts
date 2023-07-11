@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import path from 'path'
+import mssql from 'mssql'
 dotenv.config({path:path.resolve(__dirname,'../../env')})
 
 
@@ -10,12 +11,11 @@ export const config={
             encrypt:true,  // for secure connections
         },
     },
-    server:'localhost',
-    username:'sa',
-    database:'TheJituDB',
-    password:'1234',
+    username:process.env.DB_USERNAME as string,
+    server:process.env.DB_SERVER as string,
+    database:process.env.DB_NAME as string,
+    password:process.env.DB_PASSWORD as string
 
 }
 // console.log(config.username)
-module.exports='config';
-
+export default config;

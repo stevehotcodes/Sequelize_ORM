@@ -1,11 +1,11 @@
 import {Sequelize, DataTypes,Model} from 'sequelize'
-import {Table,Column,Model as DecoratorModel} from 'sequelize-typescript'
-import { config } from './config'
+// import {Table,Column,Model as DecoratorModel} from 'sequelize-typescript'
+import  config  from './config'
 
 
 
 const sequelize= new Sequelize(config.username, config.database, config.password,{
-    host:config.server,
+    host:config.server as string,
     dialect:'mssql',
     dialectOptions:config.dialectOptions
 
